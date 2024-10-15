@@ -1,9 +1,11 @@
 import sys
 import os
+import json
 
 cwd = os.getcwd()
 dev = False
 files = {}
+content = {}
 
 def nameOverwrite(index):
     if ((index + 1) < len(sys.argv) and sys.argv[index + 1][0] != "-"):
@@ -30,20 +32,59 @@ def checkType(fileName):
         return 0
 
 def createFolder(folderPath):
-    if not os.path.isdir(folderPath):
-        os.makedirs(folderPath)
-        if (dev): print(":) | Directory '%s' created." % folderPath)
+    if not (os.path.isdir(folderPath) or os.path.isdir(files[folderPath])):
+        if (files[folderPath] != ''):
+            os.makedirs(files[folderPath])
+        else:
+            os.makedirs(getFileName(folderPath))
+        if (dev):
+            if (files[folderPath] != ''): print(":) | Directory '%s' created." % files[folderPath])
+            else: print(":) | Directory '%s' created." % folderPath)
+        return 1
     else:
-        if (dev): print(":( | Directory '%s' already exists." % folderPath)
+        if (dev): 
+            if (files[folderPath] != ''): print(":( | Directory '%s' already exists." % files[folderPath])
+            else: print(":( | Directory '%s' already exists." % folderPath)
+        return 0
 
 def getFileName(fileName):
     return fileName.split(".")[0]
 
-def process():
+# LOAD THE NOTEBOOK AS JSON DATA AND EXTRACT NEEDED INFO
+def loadData(fileName):
+    file = open(fileName, 'r')
+
+    data = json.load(file)['cells']
+    tempContent = []
+
+    for item in data:
+        if (item['cell_type'] == 'markdown'):
+            tempContent.append(item['source'])
+    
+    content[fileName] = tempContent
+
+    file.close()
+    return 0
+
+def populateFolder(folderPath):
+    if (files[folderPath] != ''):
+        fullPath = cwd + "\\" + files[folderPath]
+    else:
+        fullPath = cwd + "\\" + folderPath
+
+    for secs in content[folderPath]:
+        createFile()
+
+    return 0
+
+def createFile():
+    return 0
+
+def main():
     global dev
     print("-- | Welcome to Pluto.")
 
-    # REMOVE PLUTO.PY FROM ARGS
+    # REMOVE PLUTO FROM ARGS
     sys.argv.pop(0)
 
     # DEV FLAG CHECK AND REMOVAL FIRST
@@ -51,20 +92,20 @@ def process():
         if (arg == "-d"): dev = True, print("-- | Dev mode has been enabled."), sys.argv.pop(sys.argv.index(arg))
 
     # OVERWRITE FLAG CHECK AND REMOVAL
-    for arg in range(len(sys.argv) - 1, -1, -1):
-        print(sys.argv[arg])
+    for arg in sys.argv:
         if (arg == "-o"): nameOverwrite(sys.argv.index(arg))
 
     # OTHER FILES CHECK
     for arg in sys.argv:
         if (arg != "" or arg != None): files[arg] = ""
 
+    if (dev): print("-- | Files: ", files)
+
     for arg in files:
         if (checkFile(cwd + "\\" + arg) and checkType(arg)):
-            createFolder(getFileName(arg))
-
-    print("-- | Files: ", files)
-
+            if (createFolder(arg)):
+                loadData(arg)
+    
 
 # '''
 # for item in my_dict:  
@@ -72,4 +113,4 @@ def process():
 #     print(my_dict[item]) #VALUE
 # '''
 
-process()
+main()
