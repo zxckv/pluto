@@ -68,9 +68,9 @@ def loadData(fileName):
 
 def populateFolder(folderPath):
     if (files[folderPath] != ''):
-        fullPath = cwd + "\\" + files[folderPath]
+        fullPath = cwd + "//" + files[folderPath]
     else:
-        fullPath = cwd + "\\" + folderPath
+        fullPath = cwd + "//" + folderPath
 
     for secs in content[folderPath]:
         createFile()
@@ -102,7 +102,7 @@ def main():
     if (dev): print("-- | Files: ", files)
 
     for arg in files:
-        if (checkFile(cwd + "\\" + arg) and checkType(arg)):
+        if (checkFile(cwd + "//" + arg) and checkType(arg)):
             if (createFolder(arg)):
                 loadData(arg)
     
