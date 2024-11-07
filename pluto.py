@@ -66,33 +66,28 @@ def loadData(fileName):
     file.close()
     return 0
 
-def populateFolder(folderPath):
-    if (files[folderPath] != ''):
-        fullPath = cwd + "/" + files[folderPath]
+def populateFolder(fileName):
+    if (files[fileName] != ''):
+        path = files[fileName]
     else:
-        fullPath = cwd + "/" + folderPath
+        path = getFileName(fileName)
 
-    for secs in content[folderPath]:
-        createFile()
+    index = 1
+    for secs in content[fileName]:
+        createFile(path, secs, index)
+        index += 1
 
     return 0
 
-def createFile(fileName):
-    if (files[fileName] != ''):
-        fullPath = files[fileName] + "/main.py"
-    else:
-        fullPath = getFileName(fileName) + "/main.py"
-
-    file = open(fullPath, "w")
+def createFile(fileName, data, index):
+    file = open(fileName + "/" + fileName + "-" + str(index) + ".py", "w")
 
     file.write("'''\n")
     
-    for seg in content[fileName]:
-        for sec in seg:
-            file.write(sec)
-        file.write("\n--------------------\n")
+    for seg in data:
+        file.write(seg)
 
-    file.write("'''\n")
+    file.write("\n'''\n\n")
 
     file.close()
 
@@ -123,7 +118,7 @@ def main():
         if (checkFile(cwd + "//" + arg) and checkType(arg)):
             if (createFolder(arg)):
                 loadData(arg)
-                createFile(arg)
+                populateFolder(arg)
     
 
 # '''
