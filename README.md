@@ -7,7 +7,7 @@ Pluto is a Jupyter Notebook (.ipynb) to Python (.py) file converter.
 The Jupyter Notebook is segmented into sections, each containing a block of markdown text. Each section will be appended to the top of a new file, under the assumption that each will be an individual question/problem.
 
 > [!WARNING]
-> Pluto is not perfect and does not remove any of the markdown segments. As such, it will create files that serve no purpose at all.
+> Pluto is not perfect and does not remove any of the markdown segments. As such, it will sometimes create files that are of no use to you and they can be deleted.
 
 ## Usage
 
@@ -36,7 +36,7 @@ Pluto also supports the ability to overwrite the name of the created folder and 
 ```
 
 > [!NOTE] 
-> You cannot use the name overwrite tag when dealing with multiple files. The first overwrite will complete, but the remaining will be ignored and the original file names used.
+> You **cannot** use the name overwrite tag when dealing with multiple files. The first overwrite will work as expected, but any further overwrite tags will not and will instead use their original file name. To overwrite multiple files, please do them seperately.
 
 #### Developer Mode
 
@@ -47,7 +47,7 @@ Using ```-d``` enables developer mode, providing verbose messages during the con
 ```
 
 > [!NOTE]
-> Devloper mode will work in conjunction with any of the other options available. It can also be placed in any position.
+> Devloper mode will work in conjunction with any of the other options available. It can also be placed in any argument position.
 
 ## License
 
