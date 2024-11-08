@@ -13,14 +13,14 @@ def nameOverwrite(index):
         sys.argv.pop(index + 1), sys.argv.pop(index), sys.argv.pop(index - 1)
         if (dev): print(":) | Name overwrite confirmed.")
     else:
-        if (dev): print(":( | Arguments passed incorrectly.")
+        print(":( | Arguments passed incorrectly. Please try again.")
 
 def checkFile(filePath):
     if (os.path.isfile(filePath)):
         if (dev): print(":) | Found file '%s'." % filePath)
         return 1
     else:
-        if (dev): print(":( | Missing File '%s'." % filePath)
+        print(":( | Missing File '%s'." % filePath)
         return 0
 
 def checkType(fileName):
@@ -28,23 +28,22 @@ def checkType(fileName):
         if (dev): print(":) | File '%s' is a Jupyter Notebook." % fileName)
         return 1
     else:
-        if (dev): print(":( | File '%s' is not a Jupyter Notebook." % fileName)
+        print(":( | File '%s' is not a Jupyter Notebook." % fileName)
         return 0
 
 def createFolder(folderPath):
-    if not (os.path.isdir(folderPath) or os.path.isdir(files[folderPath])):
+    if not (os.path.isdir(getFileName(folderPath)) or os.path.isdir(getFileName(files[folderPath]))):
         if (files[folderPath] != ''):
             os.makedirs(files[folderPath])
         else:
             os.makedirs(getFileName(folderPath))
         if (dev):
             if (files[folderPath] != ''): print(":) | Directory '%s' created." % files[folderPath])
-            else: print(":) | Directory '%s' created." % folderPath)
+            else: print(":) | Directory '%s' created." % getFileName(folderPath))
         return 1
     else:
-        if (dev): 
-            if (files[folderPath] != ''): print(":( | Directory '%s' already exists." % files[folderPath])
-            else: print(":( | Directory '%s' already exists." % folderPath)
+        if (files[folderPath] != ''): print(":( | Directory '%s' already exists." % files[folderPath])
+        else: print(":( | Directory '%s' already exists." % getFileName(folderPath))
         return 0
 
 def getFileName(fileName):
@@ -58,8 +57,7 @@ def loadData(fileName):
     tempContent = []
 
     for item in data:
-        if (item['cell_type'] == 'markdown'):
-            tempContent.append(item['source'])
+        if (item['cell_type'] == 'markdown'): tempContent.append(item['source'])
     
     content[fileName] = tempContent
 
@@ -67,14 +65,13 @@ def loadData(fileName):
     return 0
 
 def populateFolder(fileName):
-    if (files[fileName] != ''):
-        path = files[fileName]
-    else:
-        path = getFileName(fileName)
+    if (files[fileName] != ''): path = files[fileName]
+    else: path = getFileName(fileName)
 
     index = 1
     for secs in content[fileName]:
         createFile(path, secs, index)
+        if (dev): print("-- | File %s created." % (path + "-" + str(index)))
         index += 1
 
     return 0
@@ -115,16 +112,12 @@ def main():
     if (dev): print("-- | Files: ", files)
 
     for arg in files:
-        if (checkFile(cwd + "//" + arg) and checkType(arg)):
+        if (checkFile(cwd + "/" + arg) and checkType(arg)):
             if (createFolder(arg)):
                 loadData(arg)
                 populateFolder(arg)
-    
-
-# '''
-# for item in my_dict:  
-#     print(item) #KEY
-#     print(my_dict[item]) #VALUE
-# '''
+                print(":) | Conversion complete. Thank you for using Pluto.")
+            else:
+                print(":( | Process aborted.")
 
 main()
